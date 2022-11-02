@@ -14,7 +14,7 @@ plugins:
         noteKeywords:
           - MAJOR RELEASE
   - "@semantic-release/release-notes-generator"
-  # - - "@semantic-release/github"
+  - "@semantic-release/github"
   #   - assets:
   #       - path: ./.bin/incident-commander-amd64
   #         name: incident-commander-amd64
