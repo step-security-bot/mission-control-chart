@@ -37,8 +37,6 @@ jobs:
         run: ./yq -i e '.version = "${{ env.RELEASE_VERSION }}"' chart/Chart.yaml
       - name: Update app version
         run: ./yq -i e '.appVersion = "${{ env.RELEASE_VERSION }}"' chart/Chart.yaml
-      - name: Update image tags
-        run: ./yq -i e '.image.tag = "v${{ env.RELEASE_VERSION }}"' chart/values.yaml
       - name: Set up Helm
         uses: azure/setup-helm@v1
         with:
