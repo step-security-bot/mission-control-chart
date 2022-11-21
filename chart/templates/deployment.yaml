@@ -36,6 +36,9 @@ spec:
             - --kratos-api=http://kratos-public:80
             - --enable-auth
             - --disable-postgrest={{ .Values.disablePostgrest }}
+           {{- if eq .Values.externalPostgrest.enable true }}
+            - --external-postgrest-uri=http://postgrest:3000
+           {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.extra }}

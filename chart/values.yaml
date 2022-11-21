@@ -9,6 +9,9 @@ image:
 externalPostgrest:
   enable: true
   tag: v10.1.0
+  logLevel: info
+  dbScema: public
+  dbAnonRole: postgrest_api
 db:
   enabled: true
   secretKeyRef:
