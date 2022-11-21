@@ -1,10 +1,14 @@
 replicas: 1
 # Use this only if you want to replace the default that is .Chart.Name as the name of all the objects.
 nameOverride: ""
+disablePostgrest: true
 image:
   repository: docker.io/flanksource/incident-commander
   pullPolicy: IfNotPresent
   tag: "v0.0.206"
+externalPostgrest:
+  enable: true
+  tag: v10.1.0
 db:
   enabled: true
   secretKeyRef:
@@ -14,6 +18,7 @@ db:
   storageClass:
   storage: 10Gi
 canary-checker:
+  disablePostgrest: true
   db:
     external:
       enabled: true
@@ -32,6 +37,7 @@ canary-checker:
       enabled: true
       host: "canary-checker-ui.local"
 config-db:
+  disablePostgrest: true
   db:
     enabled: false
     secretKeyRef:

@@ -35,6 +35,7 @@ spec:
             - --config-db=http://config-db:8080
             - --kratos-api=http://kratos-public:80
             - --enable-auth
+            - --disable-postgrest={{ .Values.disablePostgrest }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.extra }}
