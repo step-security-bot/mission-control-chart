@@ -1,0 +1,55 @@
+{{- if eq .Values.externalPostgrest.enable true }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgrest-{{ include "incident-commander.name" . }}
+  labels:
+    app: postgrest
+    chart: "{{ .Chart.Name }}"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgrest
+      chart: "{{ .Chart.Name }}"
+  template:
+    metadata:
+      labels:
+        app: postgrest
+        chart: "{{ .Chart.Name }}"
+    spec:
+      containers:
+        - name: postgrest
+          image: docker.io/postgrest/postgrest:{{ .Values.externalPostgrest.tag | default "v10.1.0" }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: PGRST_DB_URI
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.db.secretKeyRef.name  }}
+                  key: {{ .Values.db.secretKeyRef.key }}
+            - name: PGRST_DB_SCHEMA
+              value: {{ .Values.externalPostgrest.dbScema }}
+            - name: PGRST_DB_ANON_ROLE
+              value: {{ .Values.externalPostgrest.dbAnonRole }}
+            - name: PGRST_LOG_LEVEL
+              value: {{ .Values.externalPostgrest.logLevel }}
+            - name: PGRST_OPENAPI_SERVER_PROXY_URI
+              value: http://{{ include "incident-commander.name" . }}/db 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgrest
+  labels:
+    app: postgrest
+spec:
+  ports:
+    - port: 3000
+      targetPort: 3000
+      protocol: TCP
+  selector:
+    app: postgrest
+    chart: "{{ .Chart.Name }}"
+{{- end }}
