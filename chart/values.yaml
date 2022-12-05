@@ -20,6 +20,9 @@ db:
     key: DB_URL
   storageClass:
   storage: 10Gi
+smtp:
+  secretRef:
+    name: incident-commander-smtp
 canary-checker:
   disablePostgrest: true
   db:

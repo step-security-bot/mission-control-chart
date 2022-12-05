@@ -24,6 +24,9 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.db.secretKeyRef.name  }}
                   key: {{ .Values.db.secretKeyRef.key }}
+          envFrom:
+            - secretRef:
+                name: {{ .Values.smtp.secretRef }}
           command:
             - /app/incident-commander
           args:
