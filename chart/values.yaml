@@ -23,6 +23,11 @@ db:
 smtp:
   secretRef:
     name: incident-commander-smtp
+    # Secret object should contain
+    # SMTP_HOST: <host>
+    # SMTP_PORT: <port>
+    # SMTP_USER: <user>
+    # SMTP_PASSWORD: <password>
 canary-checker:
   disablePostgrest: true
   db:
