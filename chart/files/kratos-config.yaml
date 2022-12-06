@@ -19,7 +19,7 @@ selfservice:
     error:
       ui_url: "{{ .Values.uiHost }}/error"
     settings:
-      ui_url: "{{ .Values.uiHost }}/settings"
+      ui_url: "{{ .Values.uiHost }}/profile-settings"
       privileged_session_max_age: 15m
     recovery:
       enabled: true
