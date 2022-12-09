@@ -19,7 +19,7 @@ spec:
         - command:
           - sh
           - -c
-          - chmod -R 0750 /postgres && chown 999:999 -R /postgres
+          - mkdir -p /postgres && chmod -R 0750 /postgres && chown 999:999 -R /postgres
           image: busybox
           name: postgres-perms
           volumeMounts:
