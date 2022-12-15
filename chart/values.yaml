@@ -28,6 +28,7 @@ smtp:
     # SMTP_PORT: <port>
     # SMTP_USER: <user>
     # SMTP_PASSWORD: <password>
+adminPassword: admin
 canary-checker:
   disablePostgrest: true
   db:
