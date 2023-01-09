@@ -1,6 +1,9 @@
 courier:
   smtp:
     connection_uri: smtp://wrong-url
+session:
+  # 14 days
+  lifespan: 336h
 serve:
   public:
     base_url: {{ .Values.kratosURL | quote }}
@@ -41,8 +44,7 @@ selfservice:
       after:
         password:
           hooks:
-            -
-              hook: session
+            - hook: session
 log:
   level: info
   leak_sensitive_values: false
