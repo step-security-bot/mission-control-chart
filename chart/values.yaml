@@ -128,12 +128,12 @@ kratos:
           - yet another secret
           - lorem ipsum dolores
           - just a random a string secret
-    courier:
-      smtp:
-        connection_uri: smtp://wrong-url
-    session:
-      # Session lifespan. Default: 14 days
-      lifespan: 336h
+      courier:
+        smtp:
+          connection_uri: smtp://wrong-url
+      session:
+        # Session lifespan. Default: 14 days
+        lifespan: 336h
 resources:
   requests:
     cpu: 200m
