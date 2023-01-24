@@ -34,10 +34,10 @@ canary-checker:
   db:
     external:
       enabled: true
-    secretKeyRef:
-      create: false
-      name: postgres-connection
-      key: DB_URL
+      secretKeyRef:
+        create: false
+        name: postgres-connection
+        key: DB_URL
   flanksource-ui:
     enabled: false # Disable canary-checker by default.
     withoutAuth: true
