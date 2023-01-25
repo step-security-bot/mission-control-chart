@@ -1,4 +1,4 @@
-{{- if eq .Values.db.enabled true }}
+{{- if .Values.db.create }}
 apiVersion: batch/v1
 kind: Job
 metadata:
