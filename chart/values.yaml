@@ -11,12 +11,13 @@ externalPostgrest:
   tag: v10.1.0
   logLevel: info
   dbScema: public
-  dbAnonRole: postgrest_api
+  dbAnonRole: postgrest_anon
 db:
   create: true
   secretKeyRef:
     name: incident-commander-postgres
     key: DB_URL
+    jwtSecretKey: PGRST_JWT_SECRET
   storageClass:
   storage: 10Gi
 smtp:
