@@ -13,10 +13,9 @@ externalPostgrest:
   dbScema: public
   dbAnonRole: postgrest_api
 db:
-  enabled: true
+  create: true
   secretKeyRef:
-    create: true
-    name: postgres-connection
+    name: incident-commander-postgres
     key: DB_URL
   storageClass:
   storage: 10Gi
@@ -34,9 +33,9 @@ canary-checker:
   db:
     external:
       enabled: true
+      create: false
       secretKeyRef:
-        create: false
-        name: postgres-connection
+        name: incident-commander-postgres
         key: DB_URL
   flanksource-ui:
     enabled: false # Disable canary-checker by default.
