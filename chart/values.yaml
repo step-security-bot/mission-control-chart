@@ -51,9 +51,9 @@ config-db:
   disablePostgrest: true
   db:
     enabled: false
+    create: false
     secretKeyRef:
-      create: false
-      name: postgres-connection
+      name: incident-commander-postgres
       key: DB_URL
 # Enable ingress only if the UI is deployed outside of the cluster and calls public incident-commander api endpoint.
 ingress:
@@ -77,6 +77,9 @@ flanksource-ui:
   ingress:
     enabled: true
     host: "incident-manager-ui.local"
+    tls:
+    - hosts:
+      - "incident-manager-ui.local"
 # - if chart name (incident-commander) is changed, change the urls. E.g.
 # oryKratosURI url points to the incident-commander service with a suffix.
 #
