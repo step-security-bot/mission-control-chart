@@ -5,7 +5,7 @@ disablePostgrest: true
 image:
   repository: docker.io/flanksource/incident-commander
   pullPolicy: IfNotPresent
-  tag: "v0.0.231"
+  tag: "v0.0.232"
 externalPostgrest:
   enable: true
   tag: v10.1.0
@@ -79,8 +79,8 @@ flanksource-ui:
     enabled: true
     host: "incident-manager-ui.local"
     tls:
-    - hosts:
-      - "incident-manager-ui.local"
+      - hosts:
+          - "incident-manager-ui.local"
 # - if chart name (incident-commander) is changed, change the urls. E.g.
 # oryKratosURI url points to the incident-commander service with a suffix.
 #
