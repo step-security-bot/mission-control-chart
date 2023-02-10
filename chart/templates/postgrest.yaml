@@ -32,8 +32,8 @@ spec:
             - name: PGRST_JWT_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.db.secretKeyRef.name  }}
-                  key: {{ .Values.db.secretKeyRef.jwtSecretKey }}
+                  name: {{ .Values.db.jwtSecretKeyRef.name  }}
+                  key: {{ .Values.db.jwtSecretKeyRef.key }}
             - name: PGRST_DB_SCHEMA
               value: {{ .Values.externalPostgrest.dbScema }}
             - name: PGRST_DB_ANON_ROLE
