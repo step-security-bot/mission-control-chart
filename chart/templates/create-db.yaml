@@ -20,7 +20,7 @@ spec:
           command: ["bash"]
           args:
             - -c
-            - PGPASSWORD=$POSTGRES_PASSWORD psql -h $POSTGRES_HOST -U $POSTGRES_USER -c 'create database "incident_commander"'
+            - echo "SELECT 'CREATE DATABASE incident_commander' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'incident_commander')\gexec" | PGPASSWORD=$POSTGRES_PASSWORD psql -h $POSTGRES_HOST -U $POSTGRES_USER
 
       restartPolicy: Never
 {{- end }}
