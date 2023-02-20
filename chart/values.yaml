@@ -17,7 +17,9 @@ db:
   secretKeyRef:
     name: incident-commander-postgres
     key: DB_URL
-    jwtSecretKey: PGRST_JWT_SECRET
+  jwtSecretKeyRef:
+    name: incident-commander-postgrest-jwt
+    key: PGRST_JWT_SECRET
   storageClass:
   storage: 10Gi
 smtp:
