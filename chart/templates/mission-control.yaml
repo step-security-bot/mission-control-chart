@@ -37,6 +37,17 @@ spec:
                     {{- $r.count }}
                     {{- end}}
                 results: 1
+        - name: Version
+          configLookup:
+            config:
+              name: incident-commander
+              type: Kubernetes::Deployment
+              labels:
+                app.kubernetes.io/name: incident-commander
+                app.kubernetes.io/instance: incident-commander
+            display:
+              javascript: |
+                config.spec.template.spec.containers[0]['image'].split(':')[1]
         - name: Component count
           lookup:
             postgres:
@@ -112,6 +123,18 @@ spec:
                 display:
                   javascript: results.rows[0].count
                 results: 1
+        - name: Version
+          configLookup:
+            config:
+              name: canary-checker
+              type: Kubernetes::Deployment
+              labels:
+                app.kubernetes.io/name: canary-checker
+                app.kubernetes.io/instance: incident-commander
+            display:
+              javascript: |
+                config.spec.template.spec.containers[0]['image'].split(':')[1]
+
       components:
         - name: SystemTemplates
           type: virtual
@@ -167,6 +190,18 @@ spec:
                 display:
                   javascript: results.rows[0].count
                 results: 1
+        - name: Version
+          configLookup:
+            config:
+              name: apm-hub
+              type: Kubernetes::Deployment
+              labels:
+                app.kubernetes.io/name: apm-hub
+                app.kubernetes.io/instance: incident-commander
+            display:
+              javascript: |
+                config.spec.template.spec.containers[0]['image'].split(':')[1]
+
     - name: Config DB
       type: API
       icon: config
@@ -197,6 +232,18 @@ spec:
                     {{- $r.count }}
                     {{- end}}
                 results: 1
+        - name: Version
+          configLookup:
+            config:
+              name: config-db
+              type: Kubernetes::Deployment
+              labels:
+                app.kubernetes.io/name: config-db
+                app.kubernetes.io/instance: incident-commander
+            display:
+              javascript: |
+                config.spec.template.spec.containers[0]['image'].split(':')[1]
+
       components:
         - name: ConfigScrapers
           type: virtual
@@ -313,28 +360,16 @@ spec:
           labelSelector: app.kubernetes.io/name=incident-manager-ui
       properties:
         - name: Version
-          lookup:
-            postgres:
-              - connection: "postgres://$(username):$(password)@postgres:5432/incident_commander?sslmode=disable"
-                name: Version query
-                auth:
-                  username:
-                    valueFrom:
-                      secretKeyRef:
-                        key: POSTGRES_USER
-                        name: incident-commander-postgres
-                  password:
-                    valueFrom:
-                      secretKeyRef:
-                        key: POSTGRES_PASSWORD
-                        name: incident-commander-postgres
-                query: SELECT VERSION()
-                display:
-                  template: |
-                    {{- range $r := .results.rows }}
-                    {{- $r.version }}
-                    {{- end}}
-                results: 1
+          configLookup:
+            config:
+              name: incident-manager-ui
+              type: Kubernetes::Deployment
+              labels:
+                app.kubernetes.io/name: incident-manager-ui
+                app.kubernetes.io/instance: incident-commander
+            display:
+              javascript: |
+                config.spec.template.spec.containers[0]['image'].split(':')[1]
     - name: Kratos
       type: Service
       icon: user
@@ -343,7 +378,15 @@ spec:
           labelSelector: app.kubernetes.io/name=kratos
       properties:
         - name: Version
-          text: todo
+          configLookup:
+            config:
+              name: kratos
+              type: Kubernetes::Deployment
+              labels:
+                app.kubernetes.io/name: kratos
+                app.kubernetes.io/instance: incident-commander
+            display:
+              javascript: tags['app.kubernetes.io/version']
         - name: Identities
           lookup:
             postgres:
