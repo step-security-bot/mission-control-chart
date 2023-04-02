@@ -1,0 +1,35 @@
+apiVersion: configs.flanksource.com/v1
+kind: ScrapeConfig
+metadata:
+  name: scrapeconfig-kubernetes
+spec:
+  kubernetesFile:
+    - tags:
+        chart: mission-control
+      selector:
+        namespace: demo
+        kind: Statefulset
+        name: postgresql
+      files:
+        - path:
+            - /var/lib/postgresql/data/pgdata/postgresql.conf
+            - /var/lib/postgresql/data/pgdata/pg_hba.conf
+            - /var/lib/postgresql/data/pgdata/pg_ident.conf
+          format: properties
+    - tags:
+        chart: mission-control
+        app: kratos
+      selector:
+        namespace: demo
+        kind: Deployment
+        name: kratos
+      files:
+        - path:
+            - /etc/config/kratos.yaml
+          format: yaml
+      transform:
+        mask:
+          - selector:
+              type: File
+            jsonpath: $.courier.smtp.connection_uri
+            value: md5sum
