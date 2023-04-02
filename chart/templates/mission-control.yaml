@@ -1,0 +1,412 @@
+apiVersion: canaries.flanksource.com/v1
+kind: SystemTemplate
+metadata:
+  name: mission-control
+spec:
+  type: TODO
+  icon: rocket # TODO: Create flanksource icon
+  schedule: "@every 15m"
+  components:
+    - name: Incident Commander
+      type: API
+      icon: incidents
+      selectors:
+        - name: pods
+          labelSelector: app.kubernetes.io/name=incident-commander
+      properties:
+        - name: Incidents
+          lookup:
+            postgres:
+              - connection: "postgres://$(username):$(password)@postgres:5432/incident_commander?sslmode=disable"
+                name: Incident count query
+                auth:
+                  username:
+                    valueFrom:
+                      secretKeyRef:
+                        key: POSTGRES_USER
+                        name: incident-commander-postgres
+                  password:
+                    valueFrom:
+                      secretKeyRef:
+                        key: POSTGRES_PASSWORD
+                        name: incident-commander-postgres
+                query: SELECT count(*) FROM incidents WHERE (resolved IS NULL) OR (closed IS NULL)
+                display:
+                  template: |
+                    {{- range $r := .results.rows }}
+                    {{- $r.count }}
+                    {{- end}}
+                results: 1
+        - name: Version
+          configLookup:
+            config:
+              name: incident-commander
+              type: Kubernetes::Deployment
+              labels:
+                app.kubernetes.io/name: incident-commander
+                app.kubernetes.io/instance: incident-commander
+            display:
+              javascript: |
+                config.spec.template.spec.containers[0]['image'].split(':')[1]
+        - name: Component count
+          lookup:
+            postgres:
+              - connection: "postgres://$(username):$(password)@postgres:5432/incident_commander?sslmode=disable"
+                name: Component count query
+                auth:
+                  username:
+                    valueFrom:
+                      secretKeyRef:
+                        key: POSTGRES_USER
+                        name: incident-commander-postgres
+                  password:
+                    valueFrom:
+                      secretKeyRef:
+                        key: POSTGRES_PASSWORD
+                        name: incident-commander-postgres
+                query: SELECT count(*) FROM components WHERE deleted_at IS NULL
+                display:
+                  template: |
+                    {{- range $r := .results.rows }}
+                    {{- $r.count }}
+                    {{- end}}
+                results: 1
+      components:
+        - name: Teams
+          type: virtual
+          icon: group
+          lookup:
+            postgres:
+              - connection: "postgres://$(username):$(password)@postgres:5432/incident_commander?sslmode=disable"
+                name: Team names query
+                auth:
+                  username:
+                    valueFrom:
+                      secretKeyRef:
+                        key: POSTGRES_USER
+                        name: incident-commander-postgres
+                  password:
+                    valueFrom:
+                      secretKeyRef:
+                        key: POSTGRES_PASSWORD
+                        name: incident-commander-postgres
+                query: SELECT name FROM teams
+                display:
+                  javascript: |
+                    JSON.stringify(results.rows.map(function(r) {return {name: r.name}}))
+                results: -1
+
+    - name: Canary Checker
+      type: API
+      icon: canary-checker
+      selectors:
+        - name: pods
+          labelSelector: app.kubernetes.io/name=canary-checker
+      properties:
+        - name: Checks
+          lookup:
+            postgres:
+              - connection: "postgres://$(username):$(password)@postgres:5432/incident_commander?sslmode=disable"
+                name: Check count query
+                auth:
+                  username:
+                    valueFrom:
+                      secretKeyRef:
+                        key: POSTGRES_USER
+                        name: incident-commander-postgres
+                  password:
+                    valueFrom:
+                      secretKeyRef:
+                        key: POSTGRES_PASSWORD
+                        name: incident-commander-postgres
+                query: SELECT count(*) FROM checks WHERE deleted_at IS NULL
+                display:
+                  javascript: results.rows[0].count
+                results: 1
+        - name: Version
+          configLookup:
+            config:
+              name: canary-checker
+              type: Kubernetes::Deployment
+              labels:
+                app.kubernetes.io/name: canary-checker
+                app.kubernetes.io/instance: incident-commander
+            display:
+              javascript: |
+                config.spec.template.spec.containers[0]['image'].split(':')[1]
+
+      components:
+        - name: SystemTemplates
+          type: virtual
+          icon: k8s-customresourcedefinition
+          lookup:
+            postgres:
+              - connection: "postgres://$(username):$(password)@postgres:5432/incident_commander?sslmode=disable"
+                name: SystemTemplate count query
+                auth:
+                  username:
+                    valueFrom:
+                      secretKeyRef:
+                        key: POSTGRES_USER
+                        name: incident-commander-postgres
+                  password:
+                    valueFrom:
+                      secretKeyRef:
+                        key: POSTGRES_PASSWORD
+                        name: incident-commander-postgres
+                query: SELECT name FROM templates WHERE deleted_at IS NULL
+                display:
+                  javascript: |
+                    JSON.stringify(results.rows.map(function(r) {return {name: r.name}}))
+                results: 1
+          forEach:
+            properties:
+              - name: Type
+                text: SystemTemplate
+    - name: APM Hub
+      type: API
+      icon: logs
+      selectors:
+        - name: pods
+          labelSelector: app.kubernetes.io/name=apm-hub
+      properties:
+        - name: Logging Backends
+          lookup:
+            postgres:
+              - connection: "postgres://$(username):$(password)@postgres:5432/incident_commander?sslmode=disable"
+                name: Backends count query
+                auth:
+                  username:
+                    valueFrom:
+                      secretKeyRef:
+                        key: POSTGRES_USER
+                        name: incident-commander-postgres
+                  password:
+                    valueFrom:
+                      secretKeyRef:
+                        key: POSTGRES_PASSWORD
+                        name: incident-commander-postgres
+                query: SELECT count(*) FROM logging_backends WHERE deleted_at IS NULL
+                display:
+                  javascript: results.rows[0].count
+                results: 1
+        - name: Version
+          configLookup:
+            config:
+              name: apm-hub
+              type: Kubernetes::Deployment
+              labels:
+                app.kubernetes.io/name: apm-hub
+                app.kubernetes.io/instance: incident-commander
+            display:
+              javascript: |
+                config.spec.template.spec.containers[0]['image'].split(':')[1]
+
+    - name: Config DB
+      type: API
+      icon: config
+      selectors:
+        - name: pods
+          labelSelector: app.kubernetes.io/name=config-db
+      properties:
+        - name: Config Items
+          lookup:
+            postgres:
+              - connection: "postgres://$(username):$(password)@postgres:5432/incident_commander?sslmode=disable"
+                name: Config Items count query
+                auth:
+                  username:
+                    valueFrom:
+                      secretKeyRef:
+                        key: POSTGRES_USER
+                        name: incident-commander-postgres
+                  password:
+                    valueFrom:
+                      secretKeyRef:
+                        key: POSTGRES_PASSWORD
+                        name: incident-commander-postgres
+                query: SELECT count(*) FROM config_items WHERE deleted_at IS NULL
+                display:
+                  template: |
+                    {{- range $r := .results.rows }}
+                    {{- $r.count }}
+                    {{- end}}
+                results: 1
+        - name: Version
+          configLookup:
+            config:
+              name: config-db
+              type: Kubernetes::Deployment
+              labels:
+                app.kubernetes.io/name: config-db
+                app.kubernetes.io/instance: incident-commander
+            display:
+              javascript: |
+                config.spec.template.spec.containers[0]['image'].split(':')[1]
+
+      components:
+        - name: ConfigScrapers
+          type: virtual
+          icon: k8s-customresourcedefinition
+          lookup:
+            postgres:
+              - connection: "postgres://$(username):$(password)@postgres:5432/incident_commander?sslmode=disable"
+                name: Config scrapers count query
+                auth:
+                  username:
+                    valueFrom:
+                      secretKeyRef:
+                        key: POSTGRES_USER
+                        name: incident-commander-postgres
+                  password:
+                    valueFrom:
+                      secretKeyRef:
+                        key: POSTGRES_PASSWORD
+                        name: incident-commander-postgres
+                query: SELECT name FROM config_scrapers
+                display:
+                  javascript: |
+                    JSON.stringify(results.rows.map(function(r) {return {
+                      name: r.name,
+                      properties: [{
+                        name: 'Last runtime',
+                        text: 'Todo',
+                      }],
+                    }}))
+                results: 1
+
+    - name: PostgreSQL
+      type: Database
+      icon: postgres
+      selectors:
+        - name: pods
+          labelSelector: app.kubernetes.io/name=postgres
+      properties:
+        - name: Version
+          lookup:
+            postgres:
+              - connection: "postgres://$(username):$(password)@postgres:5432/incident_commander?sslmode=disable"
+                name: Version query
+                auth:
+                  username:
+                    valueFrom:
+                      secretKeyRef:
+                        key: POSTGRES_USER
+                        name: incident-commander-postgres
+                  password:
+                    valueFrom:
+                      secretKeyRef:
+                        key: POSTGRES_PASSWORD
+                        name: incident-commander-postgres
+                query: SELECT VERSION()
+                display:
+                  template: |
+                    {{- range $r := .results.rows }}
+                    {{- $r.version }}
+                    {{- end}}
+                results: 1
+        - name: Size
+          lookup:
+            postgres:
+              - connection: "postgres://$(username):$(password)@postgres:5432/incident_commander?sslmode=disable"
+                name: Size query
+                auth:
+                  username:
+                    valueFrom:
+                      secretKeyRef:
+                        key: POSTGRES_USER
+                        name: incident-commander-postgres
+                  password:
+                    valueFrom:
+                      secretKeyRef:
+                        key: POSTGRES_PASSWORD
+                        name: incident-commander-postgres
+                query: SELECT pg_size_pretty(pg_database_size('incident_commander'))
+                display:
+                  template: |
+                    {{- range $r := .results.rows }}
+                    {{- $r.pg_size_pretty }}
+                    {{- end}}
+                results: 1
+        - name: Active connections
+          lookup:
+            postgres:
+              - connection: "postgres://$(username):$(password)@postgres:5432/incident_commander?sslmode=disable"
+                name: Active connections query
+                auth:
+                  username:
+                    valueFrom:
+                      secretKeyRef:
+                        key: POSTGRES_USER
+                        name: incident-commander-postgres
+                  password:
+                    valueFrom:
+                      secretKeyRef:
+                        key: POSTGRES_PASSWORD
+                        name: incident-commander-postgres
+                query: SELECT sum(numbackends) FROM pg_stat_database
+                display:
+                  template: |
+                    {{- range $r := .results.rows }}
+                    {{- $r.sum }}
+                    {{- end}}
+                results: 1
+
+    - name: UI
+      type: Website
+      icon: https
+      selectors:
+        - name: pods
+          labelSelector: app.kubernetes.io/name=incident-manager-ui
+      properties:
+        - name: Version
+          configLookup:
+            config:
+              name: incident-manager-ui
+              type: Kubernetes::Deployment
+              labels:
+                app.kubernetes.io/name: incident-manager-ui
+                app.kubernetes.io/instance: incident-commander
+            display:
+              javascript: |
+                config.spec.template.spec.containers[0]['image'].split(':')[1]
+    - name: Kratos
+      type: Service
+      icon: user
+      selectors:
+        - name: pods
+          labelSelector: app.kubernetes.io/name=kratos
+      properties:
+        - name: Version
+          configLookup:
+            config:
+              name: kratos
+              type: Kubernetes::Deployment
+              labels:
+                app.kubernetes.io/name: kratos
+                app.kubernetes.io/instance: incident-commander
+            display:
+              javascript: tags['app.kubernetes.io/version']
+        - name: Identities
+          lookup:
+            postgres:
+              - connection: "postgres://$(username):$(password)@postgres:5432/incident_commander?sslmode=disable"
+                name: Identity count query
+                auth:
+                  username:
+                    valueFrom:
+                      secretKeyRef:
+                        key: POSTGRES_USER
+                        name: incident-commander-postgres
+                  password:
+                    valueFrom:
+                      secretKeyRef:
+                        key: POSTGRES_PASSWORD
+                        name: incident-commander-postgres
+                query: SELECT COUNT(*) FROM identities
+                display:
+                  template: |
+                    {{- range $r := .results.rows }}
+                    {{- $r.count }}
+                    {{- end}}
+                results: 1
