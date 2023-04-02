@@ -1,8 +1,49 @@
 apiVersion: configs.flanksource.com/v1
 kind: ScrapeConfig
 metadata:
-  name: scrapeconfig-kubernetes
+  name: mission-control-files
 spec:
+  sql:
+    - connection: "postgres://$(username):$(password)@postgres:5432/incident_commander?sslmode=disable"
+      name: pg_settings
+      tags:
+        chart: mission-control
+      type: "Postgres"
+      id: "incident_commander"
+      auth:
+        username:
+          valueFrom:
+            secretKeyRef:
+              key: POSTGRES_USER
+              name: incident-commander-postgres
+        password:
+          valueFrom:
+            secretKeyRef:
+              key: POSTGRES_PASSWORD
+              name: incident-commander-postgres
+
+      items: .database
+      query: |
+        WITH settings AS (
+          select json_object_agg(name, concat(setting,unit)) as setting from pg_settings where source != 'default'
+          ),
+          roles as (
+          SELECT json_object_agg(usename,
+            CASE
+              WHEN usesuper AND usecreatedb THEN
+              CAST('superuser, create database' AS pg_catalog.text)
+              WHEN usesuper THEN
+                CAST('superuser' AS pg_catalog.text)
+              WHEN usecreatedb THEN
+                CAST('create database' AS pg_catalog.text)
+              ELSE
+                CAST('' AS pg_catalog.text)
+            END) as role
+          FROM pg_catalog.pg_user
+        )
+        select json_build_object('version', version(), 'settings', s.setting, 'roles', r.role ) as database FROM (SELECT * from settings) as s, (Select * from roles) as r
+
+      results: 1
   kubernetesFile:
     - tags:
         chart: mission-control
