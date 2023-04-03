@@ -9,6 +9,7 @@ spec:
   schedule: "@every 15m"
   properties:
     - name: URL
+      type: url
       configLookup:
         config:
           name: incident-manager-ui
@@ -95,6 +96,7 @@ spec:
                 results: 1
         - name: Docs
           text: https://docs.flanksource.com
+          type: url
       components:
         - name: Teams
           type: lookup
@@ -167,6 +169,7 @@ spec:
                 config.spec.template.spec.containers[0]['image'].split(':')[1]
         - name: Docs
           text: https://docs.flanksource.com/canary-checker/overview
+          type: url
       components:
         - name: SystemTemplates
           type: lookup
@@ -265,6 +268,7 @@ spec:
                 config.spec.template.spec.containers[0]['image'].split(':')[1]
         - name: Docs
           text: https://docs.flanksource.com/apm-hub/overview
+          type: url
 
     - name: Config DB
       type: API
@@ -316,6 +320,7 @@ spec:
                 config.spec.template.spec.containers[0]['image'].split(':')[1]
         - name: Docs
           text: https://docs.flanksource.com/config-db/overview
+          type: url
 
       components:
         - name: ConfigScrapers
