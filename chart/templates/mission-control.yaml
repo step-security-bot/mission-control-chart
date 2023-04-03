@@ -3,18 +3,39 @@ kind: SystemTemplate
 metadata:
   name: mission-control
 spec:
-  type: TODO
   icon: mission-control
+  type: Topology
   schedule: "@every 15m"
+  properties:
+    - name: URL
+      type: url
+      configLookup:
+        config:
+          name: incident-manager-ui
+          type: Kubernetes::Ingress
+          tags:
+            app.kubernetes.io/name: incident-manager-ui
+            app.kubernetes.io/instance: incident-commander
+        display:
+          javascript: |
+            config.spec.rules[0].host
   components:
     - name: Incident Commander
       type: API
       icon: incidents
+      checks:
+        - inline:
+            schedule: "@every 1m"
+            http:
+              - name: incident-commander-http-check
+                endpoint: http://incident-commander:8080/health
+                responseCodes: [200]
       selectors:
         - name: pods
           labelSelector: app.kubernetes.io/name=incident-commander
       properties:
         - name: Incidents
+          headline: true
           lookup:
             postgres:
               - connection: "postgres://$(username):$(password)@postgres:5432/incident_commander?sslmode=disable"
@@ -43,16 +64,18 @@ spec:
             config:
               name: incident-commander
               type: Kubernetes::Deployment
-              labels:
+              tags:
                 app.kubernetes.io/name: incident-commander
                 app.kubernetes.io/instance: incident-commander
             display:
               javascript: |
                 config.spec.template.spec.containers[0]['image'].split(':')[1]
-
+        - name: Docs
+          text: https://docs.flanksource.com
+          type: url
       components:
         - name: Teams
-          type: virtual
+          type: lookup
           icon: group
           lookup:
             postgres:
@@ -81,6 +104,13 @@ spec:
       selectors:
         - name: pods
           labelSelector: app.kubernetes.io/name=canary-checker
+      checks:
+        - inline:
+            schedule: "@every 1m"
+            http:
+              - name: canary-checker-http-check
+                endpoint: http://canary-checker:8080/health
+                responseCodes: [200]
       properties:
         - name: Components
           headline: true
@@ -139,10 +169,12 @@ spec:
             display:
               javascript: |
                 config.spec.template.spec.containers[0]['image'].split(':')[1]
-
+        - name: Docs
+          text: https://docs.flanksource.com/canary-checker/overview
+          type: url
       components:
         - name: SystemTemplates
-          type: virtual
+          type: lookup
           icon: k8s-customresourcedefinition
           lookup:
             postgres:
@@ -159,10 +191,40 @@ spec:
                       secretKeyRef:
                         key: POSTGRES_PASSWORD
                         name: incident-commander-postgres
-                query: SELECT name FROM templates WHERE deleted_at IS NULL
+                query: |
+                  SELECT * FROM (
+                    SELECT
+                      ROW_NUMBER() OVER (PARTITION BY t.name ORDER BY time_end DESC) AS rn, t.name, jh.status, jh.success_count,
+                      jh.error_count, jh.duration_millis, jh.time_end
+                    FROM templates t
+                    INNER JOIN job_history jh ON t.id::text = jh.resource_id) AS s WHERE rn = 1
                 display:
                   javascript: |
-                    JSON.stringify(results.rows.map(function(r) {return {name: r.name}}))
+                    JSON.stringify(results.rows.map(function(r) {return {
+                      name: r.name,
+                      properties: [
+                      {
+                        name: 'Last runtime',
+                        text: r.time_end,
+                      },
+                      {
+                        name: 'Duration',
+                        text: r.duration_millis,
+                        unit: 'ms',
+                        headline: true,
+                      },
+                      {
+                        name: 'Success Count',
+                        text: r.success_count,
+                        headline: true,
+                      },
+                      {
+                        name: 'Error Count',
+                        text: r.error_count,
+                        headline: true,
+                      },
+                    ],
+                    }}))
                 results: 1
           forEach:
             properties:
@@ -206,6 +268,9 @@ spec:
             display:
               javascript: |
                 config.spec.template.spec.containers[0]['image'].split(':')[1]
+        - name: Docs
+          text: https://docs.flanksource.com/apm-hub/overview
+          type: url
 
     - name: Config DB
       type: API
@@ -213,6 +278,13 @@ spec:
       selectors:
         - name: pods
           labelSelector: app.kubernetes.io/name=config-db
+      checks:
+        - inline:
+            schedule: "@every 1m"
+            http:
+              - name: config-db-http-check
+                endpoint: http://config-db:8080/live
+                responseCodes: [200]
       properties:
         - name: Config Items
           lookup:
@@ -248,10 +320,13 @@ spec:
             display:
               javascript: |
                 config.spec.template.spec.containers[0]['image'].split(':')[1]
+        - name: Docs
+          text: https://docs.flanksource.com/config-db/overview
+          type: url
 
       components:
         - name: ConfigScrapers
-          type: virtual
+          type: lookup
           icon: k8s-customresourcedefinition
           lookup:
             postgres:
@@ -268,15 +343,39 @@ spec:
                       secretKeyRef:
                         key: POSTGRES_PASSWORD
                         name: incident-commander-postgres
-                query: SELECT name FROM config_scrapers
+                query: |
+                  SELECT * FROM (
+                    SELECT
+                      ROW_NUMBER() OVER (PARTITION BY c.name ORDER BY time_end DESC) AS rn, c.name, jh.status, jh.success_count,
+                      jh.error_count, jh.duration_millis, jh.time_end
+                    FROM config_scrapers c
+                    INNER JOIN job_history jh ON c.id::text = jh.resource_id) AS s WHERE rn = 1
                 display:
                   javascript: |
                     JSON.stringify(results.rows.map(function(r) {return {
                       name: r.name,
-                      properties: [{
+                      properties: [
+                      {
                         name: 'Last runtime',
-                        text: 'Todo',
-                      }],
+                        text: r.time_end,
+                      },
+                      {
+                        name: 'Duration',
+                        text: r.duration_millis,
+                        unit: 'ms',
+                        headline: true,
+                      },
+                      {
+                        name: 'Success Count',
+                        text: r.success_count,
+                        headline: true,
+                      },
+                      {
+                        name: 'Error Count',
+                        text: r.error_count,
+                        headline: true,
+                      },
+                    ],
                     }}))
                 results: 1
 
