@@ -17,8 +17,7 @@ spec:
             app.kubernetes.io/name: incident-manager-ui
             app.kubernetes.io/instance: incident-commander
         display:
-          javascript: |
-            config.spec.rules[0].host
+          javascript: config.spec.rules[0].host
   components:
     - name: Incident Commander
       type: API
@@ -163,7 +162,7 @@ spec:
             config:
               name: canary-checker
               type: Kubernetes::Deployment
-              labels:
+              tags:
                 app.kubernetes.io/name: canary-checker
                 app.kubernetes.io/instance: incident-commander
             display:
@@ -262,7 +261,7 @@ spec:
             config:
               name: apm-hub
               type: Kubernetes::Deployment
-              labels:
+              tags:
                 app.kubernetes.io/name: apm-hub
                 app.kubernetes.io/instance: incident-commander
             display:
@@ -314,7 +313,7 @@ spec:
             config:
               name: config-db
               type: Kubernetes::Deployment
-              labels:
+              tags:
                 app.kubernetes.io/name: config-db
                 app.kubernetes.io/instance: incident-commander
             display:
@@ -470,7 +469,7 @@ spec:
             config:
               name: incident-manager-ui
               type: Kubernetes::Deployment
-              labels:
+              tags:
                 app.kubernetes.io/name: incident-manager-ui
                 app.kubernetes.io/instance: incident-commander
             display:
@@ -488,7 +487,7 @@ spec:
             config:
               name: kratos
               type: Kubernetes::Deployment
-              labels:
+              tags:
                 app.kubernetes.io/name: kratos
                 app.kubernetes.io/instance: incident-commander
             display:
