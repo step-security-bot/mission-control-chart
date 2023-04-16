@@ -1,6 +1,6 @@
 apiVersion: v2
-name: incident-commander
-description: A Helm chart for incident-commander
+name: mission-control
+description: A Helm chart for flanksource mission control
 type: application
 version: 0.1.0
 appVersion: "0.0.10"
