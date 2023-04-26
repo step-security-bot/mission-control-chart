@@ -4,6 +4,8 @@ description: A Helm chart for flanksource mission control
 type: application
 version: 0.1.0
 appVersion: "0.0.10"
+maintainers:
+  - name: Flanksource
 dependencies:
   - name: apm-hub
     version: ">= 0.0.20"
