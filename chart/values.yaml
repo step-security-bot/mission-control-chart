@@ -12,6 +12,16 @@ externalPostgrest:
   logLevel: info
   dbScema: public
   dbAnonRole: postgrest_anon
+
+# Configuration for pushing data to upstream
+# upstream_push:
+#   name: ''
+#   host: ''
+#   user: ''
+#   password: ''
+#   labels: 'key1=val1,key2=val2'
+upstream_push: {}
+
 db:
   create: true
   secretKeyRef:
