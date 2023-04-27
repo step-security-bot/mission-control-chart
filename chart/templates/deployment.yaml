@@ -49,6 +49,13 @@ spec:
            {{- if eq .Values.externalPostgrest.enable true }}
             - --external-postgrest-uri=http://postgrest:3000
            {{- end }}
+           {{- if .Values.upstream_push }}
+            - --upstream-name={{ .Values.upstream_push.name }}
+            - --upstream-host={{ .Values.upstream_push.host }}
+            - --upstream-user={{ .Values.upstream_push.user }}
+            - --upstream-password={{ .Values.upstream_push.password }}
+            - --upstream-labels={{ .Values.upstream_push.labels | default "" }}
+           {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           livenessProbe:
