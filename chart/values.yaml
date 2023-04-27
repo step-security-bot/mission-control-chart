@@ -5,14 +5,13 @@ disablePostgrest: true
 image:
   repository: docker.io/flanksource/incident-commander
   pullPolicy: IfNotPresent
-  tag: "v0.0.266"
+  tag: "v0.0.267"
 externalPostgrest:
   enable: true
   tag: v10.1.0
   logLevel: info
   dbScema: public
   dbAnonRole: postgrest_anon
-
 # Configuration for pushing data to upstream
 # upstream_push:
 #   name: ''
@@ -21,7 +20,6 @@ externalPostgrest:
 #   password: ''
 #   labels: 'key1=val1,key2=val2'
 upstream_push: {}
-
 db:
   create: true
   secretKeyRef:
