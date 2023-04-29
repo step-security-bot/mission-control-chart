@@ -32,7 +32,7 @@ spec:
           - name: PGDATA
             value: /var/lib/postgresql/data
           - name: POSTGRES_DB
-            value: incident_commander
+            value: mission_control
         volumeMounts:
           - name: postgresql
             mountPath: /var/lib/postgresql/
