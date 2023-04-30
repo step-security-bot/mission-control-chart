@@ -85,13 +85,13 @@ ingress:
   #    hosts:
   #      - chart-example.local
 uiHost: "http://incident-manager-ui.local"
-kratosURL: http://incident-commander:8080/kratos/
+kratosURL: http://mission-control:8080/kratos/
 flanksource-ui:
   enabled: true
   nameOverride: "incident-manager-ui"
   fullnameOverride: "incident-manager-ui"
-  oryKratosURL: http://incident-commander:8080/kratos/
-  backendURL: http://incident-commander:8080
+  oryKratosURL: http://mission-control:8080/kratos/
+  backendURL: http://mission-control:8080
   ingress:
     enabled: true
     host: "incident-manager-ui.local"
@@ -137,7 +137,7 @@ kratos:
       type: initContainer
     serve:
       public:
-        base_url: http://incident-commander:8080/kratos/
+        base_url: http://mission-control:8080/kratos/
         cors:
           enabled: true
           # annotations:
