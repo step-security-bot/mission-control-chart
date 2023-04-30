@@ -19,7 +19,7 @@ dependencies:
     repository: https://flanksource.github.io/charts
     condition: flanksource-ui.enabled
   - name: kratos
-    version: "0.25.3"
+    version: "0.32.0"
     repository: https://k8s.ory.sh/helm/charts
     import-values:
       - child: secret
