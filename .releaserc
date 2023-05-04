@@ -1,6 +1,6 @@
 branches:
   - name: main
-    prerelease: beta
+    prerelease: "beta"
   # A minimum of 1 and a maximum of 3 release branches are required in the branches configuration 
   - name: dummy-release
 plugins:
@@ -17,7 +17,6 @@ plugins:
         noteKeywords:
           - MAJOR RELEASE
   - "@semantic-release/release-notes-generator"
-  - "@semantic-release/github"
   - - "@semantic-release/github"
       # From: https://github.com/semantic-release/github/pull/487#issuecomment-1486298997  
     - successComment: false
