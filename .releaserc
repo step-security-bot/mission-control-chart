@@ -1,6 +1,6 @@
 branches:
   - name: main
-    prerelease: "beta"
+    prerelease: beta
     channel: beta
   # A minimum of 1 and a maximum of 3 release branches are required in the branches configuration 
   - name: dummy-release
