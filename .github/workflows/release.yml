@@ -27,13 +27,8 @@ jobs:
           chmod +x yq
       - name: Set version
         run: |
-          if ${{ needs.semantic-release.outputs.new-release-published }}; then
-            echo "RELEASE_VERSION=${{ needs.semantic-release.outputs.release-version }}" >> $GITHUB_ENV
-          else
-            git fetch --prune --unshallow
-            export VERSION=$(git describe --abbrev=0 --tags | sed -e 's/^v//')
-            echo "RELEASE_VERSION=$VERSION" >> $GITHUB_ENV
-          fi
+          git fetch --prune --unshallow
+          echo "RELEASE_VERSION=$(git describe --abbrev=0 --tags | sed -e 's/^v//')" >> $GITHUB_ENV
       - name: Update chart version
         run: ./yq -i e '.version = "${{ env.RELEASE_VERSION }}"' chart/Chart.yaml
       - name: Update app version
