@@ -18,7 +18,7 @@ jobs:
           if [[ ${{ github.event_name == 'workflow_dispatch' }} == true ]]; then
             branches="['main']"
           else
-            branches="[{name: 'main', channel: 'beta', prerelease: 'beta'}]"
+            branches="[{name: 'main', channel: 'beta', prerelease: 'beta'}, {name: 'dummy-release'}]"
           fi
           echo "branches=$branches" >> $GITHUB_ENV
       - uses: codfish/semantic-release-action@v1
