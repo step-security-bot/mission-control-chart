@@ -3,6 +3,8 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
+
 jobs:
   semantic-release:
     runs-on: ubuntu-latest
@@ -10,9 +12,19 @@ jobs:
       release-version: ${{ steps.semantic.outputs.release-version }}
       new-release-published: ${{ steps.semantic.outputs.new-release-published }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+      - name: Set branch variable for semantic release
+        run: |
+          if [[ ${{ github.event_name == 'workflow_dispatch' }} == true ]]; then
+            branches="['main']"
+          else
+            branches="[{name: 'main', channel: 'beta', prerelease: 'beta'}]"
+          fi
+          echo "branches=$branches" >> $GITHUB_ENV
       - uses: codfish/semantic-release-action@v1
         id: semantic
+        with:
+          branches: ${{ env.branches }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
