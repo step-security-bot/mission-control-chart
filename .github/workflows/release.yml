@@ -16,15 +16,15 @@ jobs:
       - name: Set branch variable for semantic release
         run: |
           if [[ ${{ github.event_name == 'workflow_dispatch' }} == true ]]; then
-            branches="['main']"
+            BRANCHES="['main']"
           else
-            branches="[{name: 'main', channel: 'beta', prerelease: 'beta'}, {name: 'dummy-release'}]"
+            BRANCHES="[{name: 'main', channel: 'beta', prerelease: 'beta'}, {name: 'dummy-release'}]"
           fi
-          echo "branches=$branches" >> $GITHUB_ENV
+          echo "BRANCHES=$BRANCHES" >> $GITHUB_ENV
       - uses: codfish/semantic-release-action@v1
         id: semantic
         with:
-          branches: ${{ env.branches }}
+          branches: ${{ env.BRANCHES }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
@@ -66,6 +66,6 @@ jobs:
       - name: Push changes to chart repo
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_message: "Release ${{ needs.semantic-release.outputs.release-version }} of ${{ github.repository }}"
+          commit_message: "Release ${{ env.RELEASE_VERSION }} of ${{ github.repository }}"
           branch: gh-pages
           repository: ./charts
