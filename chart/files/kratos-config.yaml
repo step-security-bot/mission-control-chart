@@ -6,41 +6,40 @@ session:
   lifespan: 336h
 serve:
   public:
-    base_url: {{ .Values.kratosURL | quote }}
+    base_url: 'https://{{ index .Values "flanksource-ui" "ingress" "host" }}/api/.ory'
     cors:
       enabled: true
   # admin:
   #   base_url: http://127.0.0.1:4434/
 selfservice:
-  default_browser_return_url: "{{ .Values.uiHost }}/"
+  default_browser_return_url: 'https://{{ index .Values "flanksource-ui" "ingress" "host" }}/'
   allowed_return_urls:
-    - {{ .Values.uiHost | quote }}
+    - 'https://{{ index .Values "flanksource-ui" "ingress" "host" }}'
   methods:
     password:
       enabled: true
   flows:
     error:
-      ui_url: "{{ .Values.uiHost }}/error"
+      ui_url: 'https://{{ index .Values "flanksource-ui" "ingress" "host" }}/error'
     settings:
-      ui_url: "{{ .Values.uiHost }}/profile-settings"
+      ui_url: 'https://{{ index .Values "flanksource-ui" "ingress" "host" }}/profile-settings'
       privileged_session_max_age: 15m
     recovery:
       enabled: true
-      ui_url: "{{ .Values.uiHost }}/recovery"
+      ui_url: 'https://{{ index .Values "flanksource-ui" "ingress" "host" }}/recovery'
     verification:
       enabled: true
-      ui_url: "{{ .Values.uiHost }}/verification"
-      after:
-        default_browser_return_url: "{{ .Values.uiHost }}/"
+      ui_url: 'https://{{ index .Values "flanksource-ui" "ingress" "host" }}/verification'
     logout:
       after:
-        default_browser_return_url: "{{ .Values.uiHost }}/login"
+        default_browser_return_url: 'https://{{ index .Values "flanksource-ui" "ingress" "host" }}/login'
     login:
-      ui_url: "{{ .Values.uiHost }}/login"
+      ui_url: 'https://{{ index .Values "flanksource-ui" "ingress" "host" }}/login'
       lifespan: 10m
     registration:
+      enabled: {{ .Values.registration | default false }}
       lifespan: 10m
-      ui_url: "{{ .Values.uiHost }}/registration"
+      ui_url: 'https://{{ index .Values "flanksource-ui" "ingress" "host" }}/registration'
       after:
         password:
           hooks:
