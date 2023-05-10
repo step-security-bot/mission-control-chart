@@ -18,6 +18,8 @@ selfservice:
   methods:
     password:
       enabled: true
+    link:
+      enabled: true
   flows:
     error:
       ui_url: 'https://{{ index .Values "flanksource-ui" "ingress" "host" }}/error'
