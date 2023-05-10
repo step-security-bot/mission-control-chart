@@ -47,7 +47,7 @@ canary-checker:
     type: full
   disablePostgrest: true
   db:
-    runMigrations: false
+    runMigrations: true
     external:
       enabled: true
       create: false
