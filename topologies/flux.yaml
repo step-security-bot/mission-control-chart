@@ -7,12 +7,12 @@ spec:
   type: Topology
   schedule: "@every 5m"
   components:
-    - name: pods
+    - name: Controllers
       icon: pod
       selectors:
         - name: pods
           labelSelector: 'namespace=flux-system'
-    - name: HelmReleases
+    - name: Releases
       icon: helm
       components:
       - name: HelmReleases Component
@@ -69,6 +69,10 @@ spec:
                       name: r.name,
                       icon: 'kustomize',
                       status: status,
+                      selectors: [{
+                        name: 'pods',
+                        labelSelector: 'kustomize.toolkit.fluxcd.io/name='+r.name + ',kustomize.toolkit.fluxcd.io/namespace='+r.config.metadata.namespace
+                      }],
                       properties: [
                         {
                           name: 'Message',
@@ -81,7 +85,7 @@ spec:
                       ]
                     }
                   }))
-    - name: HelmRepos
+    - name: Repos
       icon: helm
       components:
       - name: HelmRepo Component
