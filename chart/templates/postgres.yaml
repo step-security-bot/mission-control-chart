@@ -35,7 +35,8 @@ spec:
             value: mission_control
         volumeMounts:
           - name: postgresql
-            mountPath: /var/lib/postgresql/
+            mountPath: /var/lib/postgresql/data
+            subPath: postgres
         envFrom:
           - secretRef:
               name: {{ .Values.db.secretKeyRef.name }}
