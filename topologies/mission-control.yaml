@@ -1,5 +1,5 @@
 apiVersion: canaries.flanksource.com/v1
-kind: SystemTemplate
+kind: Topology
 metadata:
   name: mission-control
 spec:
@@ -15,7 +15,7 @@ spec:
           type: Kubernetes::Ingress
           tags:
             app.kubernetes.io/name: incident-manager-ui
-            app.kubernetes.io/instance: incident-commander
+            app.kubernetes.io/instance: mission-control
         display:
           javascript: config.spec.rules[0].host
   components:
@@ -37,7 +37,7 @@ spec:
           headline: true
           lookup:
             postgres:
-              - connection: "postgres://$(username):$(password)@postgres:5432/incident_commander?sslmode=disable"
+              - connection: "postgres://$(username):$(password)@postgres:5432/mission_control?sslmode=disable"
                 name: Incident count query
                 auth:
                   username:
@@ -61,11 +61,11 @@ spec:
           headline: true
           configLookup:
             config:
-              name: incident-commander
+              name: mission-control
               type: Kubernetes::Deployment
               tags:
-                app.kubernetes.io/name: incident-commander
-                app.kubernetes.io/instance: incident-commander
+                app.kubernetes.io/name: mission-control
+                app.kubernetes.io/instance: mission-control
             display:
               javascript: |
                 config.spec.template.spec.containers[0]['image'].split(':')[1]
@@ -78,7 +78,7 @@ spec:
           icon: group
           lookup:
             postgres:
-              - connection: "postgres://$(username):$(password)@postgres:5432/incident_commander?sslmode=disable"
+              - connection: "postgres://$(username):$(password)@postgres:5432/mission_control?sslmode=disable"
                 name: Team names query
                 auth:
                   username:
@@ -115,7 +115,7 @@ spec:
           headline: true
           lookup:
             postgres:
-              - connection: "postgres://$(username):$(password)@postgres:5432/incident_commander?sslmode=disable"
+              - connection: "postgres://$(username):$(password)@postgres:5432/mission_control?sslmode=disable"
                 name: Component count query
                 auth:
                   username:
@@ -139,7 +139,7 @@ spec:
           headline: true
           lookup:
             postgres:
-              - connection: "postgres://$(username):$(password)@postgres:5432/incident_commander?sslmode=disable"
+              - connection: "postgres://$(username):$(password)@postgres:5432/mission_control?sslmode=disable"
                 name: Check count query
                 auth:
                   username:
@@ -164,7 +164,7 @@ spec:
               type: Kubernetes::Deployment
               tags:
                 app.kubernetes.io/name: canary-checker
-                app.kubernetes.io/instance: incident-commander
+                app.kubernetes.io/instance: mission-control
             display:
               javascript: |
                 config.spec.template.spec.containers[0]['image'].split(':')[1]
@@ -172,13 +172,13 @@ spec:
           text: https://docs.flanksource.com/canary-checker/overview
           type: url
       components:
-        - name: SystemTemplates
+        - name: Topologies
           type: lookup
           icon: k8s-customresourcedefinition
           lookup:
             postgres:
-              - connection: "postgres://$(username):$(password)@postgres:5432/incident_commander?sslmode=disable"
-                name: SystemTemplate count query
+              - connection: "postgres://$(username):$(password)@postgres:5432/mission_control?sslmode=disable"
+                name: Topologies count query
                 auth:
                   username:
                     valueFrom:
@@ -195,7 +195,7 @@ spec:
                     SELECT
                       ROW_NUMBER() OVER (PARTITION BY t.name ORDER BY time_end DESC) AS rn, t.name, jh.status, jh.success_count,
                       jh.error_count, jh.duration_millis, jh.time_end
-                    FROM templates t
+                    FROM topologies t
                     INNER JOIN job_history jh ON t.id::text = jh.resource_id) AS s WHERE rn = 1
                 display:
                   javascript: |
@@ -239,7 +239,7 @@ spec:
         - name: Backends
           lookup:
             postgres:
-              - connection: "postgres://$(username):$(password)@postgres:5432/incident_commander?sslmode=disable"
+              - connection: "postgres://$(username):$(password)@postgres:5432/mission_control?sslmode=disable"
                 name: Backends count query
                 auth:
                   username:
@@ -263,7 +263,7 @@ spec:
               type: Kubernetes::Deployment
               tags:
                 app.kubernetes.io/name: apm-hub
-                app.kubernetes.io/instance: incident-commander
+                app.kubernetes.io/instance: mission-control
             display:
               javascript: |
                 config.spec.template.spec.containers[0]['image'].split(':')[1]
@@ -288,7 +288,7 @@ spec:
         - name: Config Items
           lookup:
             postgres:
-              - connection: "postgres://$(username):$(password)@postgres:5432/incident_commander?sslmode=disable"
+              - connection: "postgres://$(username):$(password)@postgres:5432/mission_control?sslmode=disable"
                 name: Config Items count query
                 auth:
                   username:
@@ -315,7 +315,7 @@ spec:
               type: Kubernetes::Deployment
               tags:
                 app.kubernetes.io/name: config-db
-                app.kubernetes.io/instance: incident-commander
+                app.kubernetes.io/instance: mission-control
             display:
               javascript: |
                 config.spec.template.spec.containers[0]['image'].split(':')[1]
@@ -329,7 +329,7 @@ spec:
           icon: k8s-customresourcedefinition
           lookup:
             postgres:
-              - connection: "postgres://$(username):$(password)@postgres:5432/incident_commander?sslmode=disable"
+              - connection: "postgres://$(username):$(password)@postgres:5432/mission_control?sslmode=disable"
                 name: Config scrapers count query
                 auth:
                   username:
@@ -388,7 +388,7 @@ spec:
         - name: Version
           lookup:
             postgres:
-              - connection: "postgres://$(username):$(password)@postgres:5432/incident_commander?sslmode=disable"
+              - connection: "postgres://$(username):$(password)@postgres:5432/mission_control?sslmode=disable"
                 name: Version query
                 auth:
                   username:
@@ -412,7 +412,7 @@ spec:
           headline: true
           lookup:
             postgres:
-              - connection: "postgres://$(username):$(password)@postgres:5432/incident_commander?sslmode=disable"
+              - connection: "postgres://$(username):$(password)@postgres:5432/mission_control?sslmode=disable"
                 name: Size query
                 auth:
                   username:
@@ -436,7 +436,7 @@ spec:
           headline: true
           lookup:
             postgres:
-              - connection: "postgres://$(username):$(password)@postgres:5432/incident_commander?sslmode=disable"
+              - connection: "postgres://$(username):$(password)@postgres:5432/mission_control?sslmode=disable"
                 name: Active connections query
                 auth:
                   username:
@@ -471,7 +471,7 @@ spec:
               type: Kubernetes::Deployment
               tags:
                 app.kubernetes.io/name: incident-manager-ui
-                app.kubernetes.io/instance: incident-commander
+                app.kubernetes.io/instance: mission-control
             display:
               javascript: |
                 config.spec.template.spec.containers[0]['image'].split(':')[1]
@@ -489,13 +489,13 @@ spec:
               type: Kubernetes::Deployment
               tags:
                 app.kubernetes.io/name: kratos
-                app.kubernetes.io/instance: incident-commander
+                app.kubernetes.io/instance: mission-control
             display:
               javascript: tags['app.kubernetes.io/version']
         - name: Identities
           lookup:
             postgres:
-              - connection: "postgres://$(username):$(password)@postgres:5432/incident_commander?sslmode=disable"
+              - connection: "postgres://$(username):$(password)@postgres:5432/mission_control?sslmode=disable"
                 name: Count
                 auth:
                   username:
