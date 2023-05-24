@@ -40,6 +40,8 @@ smtp:
     # SMTP_PASSWORD: <password>
 adminPassword: admin
 canary-checker:
+  image:
+    type: full
   disablePostgrest: true
   db:
     external:
