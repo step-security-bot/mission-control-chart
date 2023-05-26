@@ -35,6 +35,7 @@ spec:
           envFrom:
             - secretRef:
                 name: {{ .Values.smtp.secretRef.name }}
+                optional: true
           command:
             - /app/incident-commander
           args:
