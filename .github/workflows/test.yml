@@ -63,7 +63,4 @@ jobs:
           ct install --charts ./chart --namespace default --helm-extra-args="--timeout 10m"
 
       - name: Test deploying topology
-        run: |
-          kubectl apply -f topologies/mission-control.yaml
-          kubectl get topology mission-control -o yaml
-          kubectl wait --for=condition=ready --timeout=5m topology mission-control
+        run: test/test.sh
