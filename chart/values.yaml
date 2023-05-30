@@ -5,12 +5,10 @@ disablePostgrest: true
 image:
   repository: docker.io/flanksource/incident-commander
   pullPolicy: IfNotPresent
-  tag: "v0.0.293"
-
+  tag: "v0.0.294"
 serviceAccount:
   # Annotations to add to the service account
   annotations: {}
-
 externalPostgrest:
   enable: true
   tag: v10.1.0
