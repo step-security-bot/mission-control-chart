@@ -60,7 +60,6 @@ jobs:
           helm dependency build ./chart
           helm repo add flanksource https://flanksource.github.io/charts
           helm repo add ory https://k8s.ory.sh/helm/charts
-          kubectl apply -f test/smtp-credentials.yaml
           ct install --charts ./chart --namespace default
 
       - name: Test deploying topology
