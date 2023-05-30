@@ -19,13 +19,13 @@ header "Events of namespace default"
 kubectl -n default get events --sort-by=.metadata.creationTimestamp
 
 header "APM-hub Logs"
-kubectl -n default logs -lcontrol-plane=apm-hub --tail 100
+kubectl -n default logs -l app.kubernetes.io/name=apm-hub --tail 100
 
 header "Canary-checker Logs"
-kubectl -n default logs -lcontrol-plane=canary-checker --tail 100
+kubectl -n default logs -l app.kubernetes.io/name=canary-checker --tail 100
 
 header "Config-DB Logs"
-kubectl -n default logs -lcontrol-plane=config-db --tail 100
+kubectl -n default logs -l app.kubernetes.io/name=config-db --tail 100
 
 header "Incident Manager UI Logs"
 kubectl -n default logs -l app.kubernetes.io/name=incident-manager-ui --tail 100
@@ -34,6 +34,6 @@ header "Kratos Logs"
 kubectl -n default logs -l app.kubernetes.io/name=kratos --tail 100
 
 header "Mission Control Logs"
-kubectl -n default logs -lcontrol-plane=incident-commander --tail 100
+kubectl -n default logs -l app.kubernetes.io/name=mission-control --tail 100
 
 exit $RESULT
