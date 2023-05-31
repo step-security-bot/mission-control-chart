@@ -9,8 +9,11 @@ function header () {
 kubectl apply -f topologies/mission-control.yaml
 kubectl get topology mission-control -o yaml
 
-kubectl wait --for=condition=ready --timeout=2m topology mission-control
 # Wait for topology to reconcile
+# The Topology object Ready state is not updated when the topology is working,
+# so we need to poll the database until the components are updated. A successful
+# topology run in an empty database will result in components having a non-zero
+# number of records. Times out after 5 minutes.
 if [[ $(uname -s) == "Darwin" ]]; then
     END_TIME=$(date -v +5M +%s)
 else
