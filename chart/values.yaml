@@ -55,7 +55,8 @@ canary-checker:
         name: incident-commander-postgres
         key: DB_URL
   flanksource-ui:
-    enabled: false # Disable canary-checker by default.
+    # Disable canary-checker by default.
+    enabled: false
     withoutAuth: true
     nameOverride: "canary-checker-ui"
     fullnameOverride: "canary-checker-ui"
@@ -117,6 +118,24 @@ kratos:
   deployment:
     extraArgs:
       - --watch-courier
+      - --config
+      - /etc/custom/config/kratos.yaml
+    extraVolumeMounts:
+      - name: kratos-custom-config-volume
+        mountPath: /etc/custom/config
+        readOnly: true
+    extraVolumes:
+      - name: kratos-custom-config-volume
+        configMap:
+          name: mission-control-kratos-config
+  automigration:
+    customArgs:
+      - "migrate"
+      - "sql"
+      - "-e"
+      - "--yes"
+      - "--config"
+      - "/etc/custom/config/kratos.yaml"
   courier:
     enabled: false
   secret:
