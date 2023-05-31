@@ -8,9 +8,28 @@ function header () {
 
 kubectl apply -f topologies/mission-control.yaml
 kubectl get topology mission-control -o yaml
-kubectl wait --for=condition=ready --timeout=2m topology mission-control
 
-RESULT=$?
+kubectl wait --for=condition=ready --timeout=2m topology mission-control
+# Wait for topology to reconcile
+if [[ $(uname -s) == "Darwin" ]]; then
+    END_TIME=$(date -v +5M +%s)
+else
+    TIMEOUT="5 minute"
+    END_TIME=$(date -ud "$TIMEOUT" +%s)
+fi
+SUCCESS=0
+
+while [[ $(date -u +%s) -le $END_TIME ]]
+do
+    echo "Waiting for toplogy to reconcile..."
+    COUNT=$(kubectl -n default exec postgresql-0 -- bash -c 'psql $DB_URL -c "SELECT COUNT(*) FROM components;"'| grep -A 2 "count" | grep "0" -c| grep -A 2 "count" | grep -c " 0$")
+    if [[ "$COUNT" != "0" ]]; then
+        SUCCESS=1
+        echo "Topology reconciled successfully"
+        break
+    fi
+    sleep 5
+done
 
 header "Topology"
 kubectl describe topology mission-control
@@ -36,4 +55,7 @@ kubectl -n default logs -l app.kubernetes.io/name=kratos --tail 100
 header "Mission Control Logs"
 kubectl -n default logs -l app.kubernetes.io/name=mission-control --tail 100
 
-exit $RESULT
+if [[ "$SUCCESS" == "1" ]]; then
+    exit 1
+fi
+exit 0
