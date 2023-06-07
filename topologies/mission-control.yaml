@@ -37,25 +37,11 @@ spec:
           headline: true
           lookup:
             postgres:
-              - connection: "postgres://$(username):$(password)@postgres:5432/mission_control?sslmode=disable"
+              - connection: connection://postgres/mission-control-postgresql
                 name: Incident count query
-                auth:
-                  username:
-                    valueFrom:
-                      secretKeyRef:
-                        key: POSTGRES_USER
-                        name: incident-commander-postgres
-                  password:
-                    valueFrom:
-                      secretKeyRef:
-                        key: POSTGRES_PASSWORD
-                        name: incident-commander-postgres
                 query: SELECT count(*) FROM incidents WHERE (resolved IS NULL) OR (closed IS NULL)
                 display:
-                  template: |
-                    {{- range $r := .results.rows }}
-                    {{- $r.count }}
-                    {{- end}}
+                  javascript: results.rows[0].count
                 results: 1
         - name: Version
           headline: true
@@ -78,19 +64,7 @@ spec:
           icon: group
           lookup:
             postgres:
-              - connection: "postgres://$(username):$(password)@postgres:5432/mission_control?sslmode=disable"
-                name: Team names query
-                auth:
-                  username:
-                    valueFrom:
-                      secretKeyRef:
-                        key: POSTGRES_USER
-                        name: incident-commander-postgres
-                  password:
-                    valueFrom:
-                      secretKeyRef:
-                        key: POSTGRES_PASSWORD
-                        name: incident-commander-postgres
+              - connection: connection://postgres/mission-control-postgresql
                 query: SELECT name FROM teams
                 display:
                   javascript: |
@@ -115,43 +89,17 @@ spec:
           headline: true
           lookup:
             postgres:
-              - connection: "postgres://$(username):$(password)@postgres:5432/mission_control?sslmode=disable"
-                name: Component count query
-                auth:
-                  username:
-                    valueFrom:
-                      secretKeyRef:
-                        key: POSTGRES_USER
-                        name: incident-commander-postgres
-                  password:
-                    valueFrom:
-                      secretKeyRef:
-                        key: POSTGRES_PASSWORD
-                        name: incident-commander-postgres
+              - connection: connection://postgres/mission-control-postgresql
                 query: SELECT count(*) FROM components WHERE deleted_at IS NULL
                 display:
-                  template: |
-                    {{- range $r := .results.rows }}
-                    {{- $r.count }}
-                    {{- end}}
+                  javascript: results.rows[0].count
                 results: 1
         - name: Checks
           headline: true
           lookup:
             postgres:
-              - connection: "postgres://$(username):$(password)@postgres:5432/mission_control?sslmode=disable"
+              - connection: connection://postgres/mission-control-postgresql
                 name: Check count query
-                auth:
-                  username:
-                    valueFrom:
-                      secretKeyRef:
-                        key: POSTGRES_USER
-                        name: incident-commander-postgres
-                  password:
-                    valueFrom:
-                      secretKeyRef:
-                        key: POSTGRES_PASSWORD
-                        name: incident-commander-postgres
                 query: SELECT count(*) FROM checks WHERE deleted_at IS NULL
                 display:
                   javascript: results.rows[0].count
@@ -177,19 +125,8 @@ spec:
           icon: k8s-customresourcedefinition
           lookup:
             postgres:
-              - connection: "postgres://$(username):$(password)@postgres:5432/mission_control?sslmode=disable"
+              - connection: connection://postgres/mission-control-postgresql
                 name: Topologies count query
-                auth:
-                  username:
-                    valueFrom:
-                      secretKeyRef:
-                        key: POSTGRES_USER
-                        name: incident-commander-postgres
-                  password:
-                    valueFrom:
-                      secretKeyRef:
-                        key: POSTGRES_PASSWORD
-                        name: incident-commander-postgres
                 query: |
                   SELECT * FROM (
                     SELECT
@@ -239,19 +176,8 @@ spec:
         - name: Backends
           lookup:
             postgres:
-              - connection: "postgres://$(username):$(password)@postgres:5432/mission_control?sslmode=disable"
+              - connection: connection://postgres/mission-control-postgresql
                 name: Backends count query
-                auth:
-                  username:
-                    valueFrom:
-                      secretKeyRef:
-                        key: POSTGRES_USER
-                        name: incident-commander-postgres
-                  password:
-                    valueFrom:
-                      secretKeyRef:
-                        key: POSTGRES_PASSWORD
-                        name: incident-commander-postgres
                 query: SELECT count(*) FROM logging_backends WHERE deleted_at IS NULL
                 display:
                   javascript: results.rows[0].count
@@ -288,25 +214,11 @@ spec:
         - name: Config Items
           lookup:
             postgres:
-              - connection: "postgres://$(username):$(password)@postgres:5432/mission_control?sslmode=disable"
+              - connection: connection://postgres/mission-control-postgresql
                 name: Config Items count query
-                auth:
-                  username:
-                    valueFrom:
-                      secretKeyRef:
-                        key: POSTGRES_USER
-                        name: incident-commander-postgres
-                  password:
-                    valueFrom:
-                      secretKeyRef:
-                        key: POSTGRES_PASSWORD
-                        name: incident-commander-postgres
                 query: SELECT count(*) FROM config_items WHERE deleted_at IS NULL
                 display:
-                  template: |
-                    {{- range $r := .results.rows }}
-                    {{- $r.count }}
-                    {{- end}}
+                  javascript: results.rows[0].count
                 results: 1
         - name: Version
           configLookup:
@@ -329,19 +241,8 @@ spec:
           icon: k8s-customresourcedefinition
           lookup:
             postgres:
-              - connection: "postgres://$(username):$(password)@postgres:5432/mission_control?sslmode=disable"
+              - connection: connection://postgres/mission-control-postgresql
                 name: Config scrapers count query
-                auth:
-                  username:
-                    valueFrom:
-                      secretKeyRef:
-                        key: POSTGRES_USER
-                        name: incident-commander-postgres
-                  password:
-                    valueFrom:
-                      secretKeyRef:
-                        key: POSTGRES_PASSWORD
-                        name: incident-commander-postgres
                 query: |
                   SELECT * FROM (
                     SELECT
@@ -388,73 +289,31 @@ spec:
         - name: Version
           lookup:
             postgres:
-              - connection: "postgres://$(username):$(password)@postgres:5432/mission_control?sslmode=disable"
+              - connection: connection://postgres/mission-control-postgresql
                 name: Version query
-                auth:
-                  username:
-                    valueFrom:
-                      secretKeyRef:
-                        key: POSTGRES_USER
-                        name: incident-commander-postgres
-                  password:
-                    valueFrom:
-                      secretKeyRef:
-                        key: POSTGRES_PASSWORD
-                        name: incident-commander-postgres
                 query: SELECT VERSION()
                 display:
-                  template: |
-                    {{- range $r := .results.rows }}
-                    {{- $r.version }}
-                    {{- end}}
+                  javascript: results.rows[0].version
                 results: 1
         - name: Size
           headline: true
           lookup:
             postgres:
-              - connection: "postgres://$(username):$(password)@postgres:5432/mission_control?sslmode=disable"
+              - connection: connection://postgres/mission-control-postgresql
                 name: Size query
-                auth:
-                  username:
-                    valueFrom:
-                      secretKeyRef:
-                        key: POSTGRES_USER
-                        name: incident-commander-postgres
-                  password:
-                    valueFrom:
-                      secretKeyRef:
-                        key: POSTGRES_PASSWORD
-                        name: incident-commander-postgres
-                query: SELECT pg_size_pretty(pg_database_size('incident_commander'))
+                query: SELECT pg_size_pretty(pg_database_size('mission_control'))
                 display:
-                  template: |
-                    {{- range $r := .results.rows }}
-                    {{- $r.pg_size_pretty }}
-                    {{- end}}
+                  javascript: results.rows[0].pg_size_pretty
                 results: 1
         - name: Connections
           headline: true
           lookup:
             postgres:
-              - connection: "postgres://$(username):$(password)@postgres:5432/mission_control?sslmode=disable"
+              - connection: connection://postgres/mission-control-postgresql
                 name: Active connections query
-                auth:
-                  username:
-                    valueFrom:
-                      secretKeyRef:
-                        key: POSTGRES_USER
-                        name: incident-commander-postgres
-                  password:
-                    valueFrom:
-                      secretKeyRef:
-                        key: POSTGRES_PASSWORD
-                        name: incident-commander-postgres
                 query: SELECT sum(numbackends) FROM pg_stat_database
                 display:
-                  template: |
-                    {{- range $r := .results.rows }}
-                    {{- $r.sum }}
-                    {{- end}}
+                  javascript: results.rows[0].sum
                 results: 1
 
     - name: UI
@@ -495,23 +354,9 @@ spec:
         - name: Identities
           lookup:
             postgres:
-              - connection: "postgres://$(username):$(password)@postgres:5432/mission_control?sslmode=disable"
+              - connection: connection://postgres/mission-control-postgresql
                 name: Count
-                auth:
-                  username:
-                    valueFrom:
-                      secretKeyRef:
-                        key: POSTGRES_USER
-                        name: incident-commander-postgres
-                  password:
-                    valueFrom:
-                      secretKeyRef:
-                        key: POSTGRES_PASSWORD
-                        name: incident-commander-postgres
                 query: SELECT COUNT(*) FROM identities
                 display:
-                  template: |
-                    {{- range $r := .results.rows }}
-                    {{- $r.count }}
-                    {{- end}}
+                  javascript: results.rows[0].count
                 results: 1
