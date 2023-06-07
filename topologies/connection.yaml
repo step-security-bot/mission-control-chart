@@ -1,0 +1,19 @@
+apiVersion: mission-control.flanksource.com/v1
+kind: Connection
+metadata:
+  name: mission-control-postgresql
+spec:
+  insecure_tls: true
+  password:
+    valueFrom:
+      secretKeyRef:
+        key: POSTGRES_PASSWORD
+        name: incident-commander-postgres
+  type: postgres
+  url:
+    value: postgres://$(username):$(password)@postgres/mission_control?sslmode=disable
+  username:
+    valueFrom:
+      secretKeyRef:
+        key: POSTGRES_USER
+        name: incident-commander-postgres
