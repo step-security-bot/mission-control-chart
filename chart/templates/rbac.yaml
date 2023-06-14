@@ -19,6 +19,7 @@ rules:
   - mission-control.flanksource.com
   resources:
   - connections
+  - incidentrules
   verbs:
   - create
   - delete
@@ -31,12 +32,14 @@ rules:
   - mission-control.flanksource.com
   resources:
   - connections/finalizers
+  - incidentrules/finalizers
   verbs:
   - update
 - apiGroups:
   - mission-control.flanksource.com
   resources:
   - connections/status
+  - incidentrules/status
   verbs:
   - get
   - patch
