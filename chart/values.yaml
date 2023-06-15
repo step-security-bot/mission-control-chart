@@ -172,6 +172,8 @@ kratos:
       session:
         # Session lifespan. Default: 14 days
         lifespan: 336h
+      log:
+        level: warning
 resources:
   requests:
     cpu: 200m
