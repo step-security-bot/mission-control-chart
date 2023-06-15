@@ -27,7 +27,7 @@ spec:
             schedule: "@every 1m"
             http:
               - name: incident-commander-http-check
-                endpoint: http://incident-commander:8080/health
+                endpoint: http://mission-control:8080/health
                 responseCodes: [200]
       selectors:
         - name: pods
