@@ -1,7 +1,6 @@
 replicas: 1
 # Use this only if you want to replace the default that is .Chart.Name as the name of all the objects.
 nameOverride: ""
-disablePostgrest: true
 image:
   repository: docker.io/flanksource/incident-commander
   pullPolicy: IfNotPresent
